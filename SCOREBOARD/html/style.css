@@ -1,0 +1,331 @@
+/* Basic reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background: transparent;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; transform: scale(1); }
+    to { opacity: 0; transform: scale(0.95); }
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(94, 124, 226, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(94, 124, 226, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(94, 124, 226, 0); }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+.fade-out {
+    animation: fadeOut 0.3s ease-in forwards;
+}
+
+/* Scoreboard container - csak egy pozicionáló elem, nincs háttere */
+#scoreboard {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    pointer-events: none; /* Ez fontos, hogy ne blokkolja a mögöttes kattintásokat */
+    transition: opacity 0.3s ease;
+    opacity: 1;
+}
+
+#scoreboard.hidden {
+    display: none !important;
+    opacity: 0;
+}
+
+/* A scoreboard táblázat maga */
+.scoreboard-container {
+    pointer-events: auto; /* Erre a konténerre lehet kattintani */
+    width: 85%;
+    max-width: 1300px;
+    background: rgba(20, 20, 30, 0.75);
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    max-height: 85vh;
+    transform: translateY(0);
+    transition: transform 0.3s ease-out, box-shadow 0.3s ease;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+.scoreboard-container:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+}
+
+/* Header */
+.scoreboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(25, 25, 35, 0.85);
+    padding: 12px 20px;
+    cursor: move;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.header-left i {
+    font-size: 1.5rem;
+    color: #5e7ce2;
+}
+
+.scoreboard-header h1 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: white;
+    letter-spacing: 0.5px;
+}
+
+.server-info {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.player-count-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 6px 12px;
+    border-radius: 20px;
+    color: #fff;
+    font-weight: 500;
+}
+
+.player-count-container i {
+    color: #5e7ce2;
+}
+
+#close-btn {
+    cursor: pointer;
+    width: 28px;
+    height: 28px;
+    background-color: rgba(220, 53, 69, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    color: #ff5555;
+}
+
+#close-btn:hover {
+    background-color: rgba(220, 53, 69, 0.4);
+    transform: scale(1.05);
+}
+
+/* Content */
+.scoreboard-content {
+    overflow-y: auto;
+    flex-grow: 1;
+    padding: 8px 10px;
+    /* Scrollbar styling */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+.scoreboard-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.scoreboard-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.scoreboard-content::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+}
+
+/* Table */
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 4px;
+    color: #fff;
+}
+
+thead {
+    position: sticky;
+    top: 0;
+    background-color: rgba(25, 25, 35, 0.85);
+    z-index: 10;
+}
+
+th, td {
+    padding: 10px 12px;
+    text-align: left;
+}
+
+th {
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+th i {
+    margin-right: 6px;
+    color: #5e7ce2;
+}
+
+tbody tr {
+    background-color: rgba(40, 40, 60, 0.4);
+    transition: all 0.2s;
+    margin-bottom: 4px;
+    opacity: 0;
+    animation: fadeIn 0.3s forwards;
+    border-left: 2px solid transparent;
+}
+
+tbody tr:nth-child(1) { animation-delay: 0.05s; }
+tbody tr:nth-child(2) { animation-delay: 0.1s; }
+tbody tr:nth-child(3) { animation-delay: 0.15s; }
+tbody tr:nth-child(4) { animation-delay: 0.2s; }
+tbody tr:nth-child(5) { animation-delay: 0.25s; }
+tbody tr:nth-child(6) { animation-delay: 0.3s; }
+tbody tr:nth-child(7) { animation-delay: 0.35s; }
+tbody tr:nth-child(8) { animation-delay: 0.4s; }
+tbody tr:nth-child(9) { animation-delay: 0.45s; }
+tbody tr:nth-child(10) { animation-delay: 0.5s; }
+
+tbody tr td {
+    border-top: none;
+    border-bottom: none;
+}
+
+tbody tr td:first-child {
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+}
+
+tbody tr td:last-child {
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+}
+
+/* Status colors */
+.status-on-duty {
+    color: #7fdb5a;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.status-on-duty:before {
+    content: "";
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #7fdb5a;
+    animation: pulse 2s infinite;
+}
+
+.status-off-duty {
+    color: #b0b0b0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.status-off-duty:before {
+    content: "";
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #b0b0b0;
+}
+
+.admin-row {
+    background-color: rgba(220, 53, 69, 0.2) !important;
+    box-shadow: 0 0 10px rgba(220, 53, 69, 0.1);
+    border-left: 2px solid #dc3545 !important;
+}
+
+/* Same faction highlighting */
+.same-faction {
+    background-color: rgba(94, 124, 226, 0.2) !important;
+    box-shadow: 0 0 10px rgba(94, 124, 226, 0.1);
+    border-left: 2px solid #5e7ce2 !important;
+}
+
+/* Admin only columns - hidden by default */
+.admin-only {
+    display: none;
+}
+
+/* Row hover effect */
+tr:hover {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Footer */
+.scoreboard-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: rgba(25, 25, 35, 0.85);
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.85rem;
+}
+
+.server-name {
+    font-weight: 500;
+}
+
+.press-key {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.key {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
+} 
